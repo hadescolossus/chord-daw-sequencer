@@ -8,6 +8,8 @@ import {
   Trash2, 
   Copy, 
   Download, 
+  ExternalLink,
+  Mail,
   Music, 
   Sliders, 
   BookOpen, 
@@ -57,6 +59,25 @@ const THEME_OPTIONS: {
   { id: "aqua", label: "Aqua", title: "Fresh Aqua (Bright Cyan)", swatch: "#06b6d4", color: "#06b6d4", hover: "#22d3ee" },
   { id: "rose", label: "Rose", title: "Fresh Rose (Neon Rose)", swatch: "#f43f5e", color: "#f43f5e", hover: "#fb7185" },
 ];
+
+const KEY_CENTER_OPTIONS = [
+  { value: "C", label: "C" },
+  { value: "C#", label: "C# / Db" },
+  { value: "D", label: "D" },
+  { value: "D#", label: "D# / Eb" },
+  { value: "E", label: "E" },
+  { value: "F", label: "F" },
+  { value: "F#", label: "F# / Gb" },
+  { value: "G", label: "G" },
+  { value: "G#", label: "G# / Ab" },
+  { value: "A", label: "A" },
+  { value: "A#", label: "A# / Bb" },
+  { value: "B", label: "B" },
+];
+
+const AUTHOR_YOUTUBE_URL = "https://www.youtube.com/@ersinbisgen";
+const CONTACT_EMAIL = "ersinbisgen@gmail.com";
+const ABOUT_URL = "https://www.google.com/search?q=ersin+bi%C5%9Fgen+&sca_esv=0d6d4865bbcdbf77&sxsrf=ANbL-n6UR3xjXqVkoBQiJ6G6D1qZCJP_Ww%3A1780172101203&ei=RUUbapGGDMLy6AOl15bBAg&biw=2560&bih=1329&ved=0ahUKEwjRvOzt6eGUAxVCOXoKHaWrJSgQ4dUDCA8&uact=5&oq=ersin+bi%C5%9Fgen+&gs_lp=Egxnd3Mtd2l6LXNlcnAiDmVyc2luIGJpxZ9nZW4gMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIFEAAY7wUyCBAAGIAEGKIESMoVUABYjA5wAHgBkAEAmAHTAaAB_AyqAQYxLjExLjG4AQPIAQD4AQGYAg2gArYNwgIKECMYgAQYigUYJ8ICChAjGPAFGMkCGCfCAggQABiABBixA8ICDhAuGIAEGIoFGLEDGIMBwgILEAAYgAQYsQMYgwHCAgUQABiABMICBBAjGCfCAgoQABiABBiKBRhDwgIOEAAYgAQYigUYsQMYgwHCAggQLhiABBixA8ICChAuGIAEGIoFGEPCAgsQLhiABBixAxiDAcICEBAuGIAEGIoFGEMYxwEY0QPCAhMQLhiABBiKBRhDGMcBGK8BGI4FwgINEAAYgAQYigUYQxixA8ICGhAuGIAEGLEDGIMBGJcFGNwEGN4EGN8E2AEBwgIQEC4YgAQYigUYQxixAxiDAcICDRAuGIAEGIoFGEMYsQPCAggQLhixAxiABMICBRAuGIAEwgIOEC4YgAQYxwEYrwEYjgXCAh8QLhiABBiKBRhDGLEDGIMBGJcFGNwEGN4EGN8E2AEBwgILEC4YrwEYxwEYgATCAh0QLhiABBjHARivARiOBRiXBRjcBBjeBBjgBNgBAcICAhAmmAMAugYGCAEQARgUkgcGMC4xMi4xoAfD1gGyBwYwLjEyLjG4B7YNwgcGMC4zLjEwyAcugAgB&sclient=gws-wiz-serp";
 
 const isValidTimeSignature = (sig: string): boolean => {
   const match = /^(\d+)\/(\d+)$/.exec(sig);
@@ -786,6 +807,7 @@ export default function App() {
 
   const selectedChord = getSelectedChord();
   const currentDetails = selectedChord ? getChordNotes(selectedChord) : [];
+  const activeScaleRootLabel = KEY_CENTER_OPTIONS.find((option) => option.value === activeScaleRoot)?.label || activeScaleRoot;
 
   // Theme configuration values for the 3 beautiful styles
   const activeTheme = THEME_OPTIONS.find((theme) => theme.id === appTheme) || THEME_OPTIONS[0];
@@ -949,9 +971,16 @@ export default function App() {
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white flex flex-wrap items-center gap-x-2 gap-y-1 font-display">
               <span>Chord DAW Sequencer</span>
-              <span className="text-xs font-medium text-zinc-400 font-sans normal-case">
-                By: Ersin BsGeN
-              </span>
+              <a
+                href={AUTHOR_YOUTUBE_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-medium text-zinc-400 hover:text-emerald-400 font-sans normal-case transition-colors inline-flex items-center gap-1"
+                title="Ersin BISGEN YouTube kanalını aç"
+              >
+                By: Ersin BISGEN
+                <ExternalLink className="h-3 w-3" />
+              </a>
               <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">
                 MIDI LAB
               </span>
@@ -964,6 +993,26 @@ export default function App() {
 
         {/* Global Action Handlers */}
         <div className="flex flex-wrap items-center gap-2.5">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="text-xs bg-[#111] text-zinc-400 hover:text-emerald-400 border border-[#222] hover:border-emerald-500/30 font-bold font-mono px-3.5 py-2 rounded-xl flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider"
+            title={`Bize yaz: ${CONTACT_EMAIL}`}
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Bize Yaz
+          </a>
+
+          <a
+            href={ABOUT_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs bg-[#111] text-zinc-400 hover:text-emerald-400 border border-[#222] hover:border-emerald-500/30 font-bold font-mono px-3.5 py-2 rounded-xl flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider"
+            title="Hakkında sayfasını aç"
+          >
+            <Info className="h-3.5 w-3.5" />
+            Hakkında
+          </a>
+
           {/* Theme Selector (Pill controls) */}
           <div className="flex items-center bg-[#111] border border-[#222] p-1 rounded-xl gap-1" id="global-theme-switcher">
             <div className="text-[10px] uppercase font-bold tracking-wider text-zinc-500 font-mono px-2 hidden sm:inline-block">
@@ -1603,18 +1652,18 @@ export default function App() {
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold font-mono">Ana Ton (Key Center)</span>
               <div className="grid grid-cols-6 gap-1">
-                {["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].map((noteKey) => (
+                {KEY_CENTER_OPTIONS.map((noteOption) => (
                   <button
-                    key={noteKey}
-                    onClick={() => setActiveScaleRoot(noteKey)}
-                    id={`scale-root-selector-${noteKey.replace('#', 's')}`}
+                    key={noteOption.value}
+                    onClick={() => setActiveScaleRoot(noteOption.value)}
+                    id={`scale-root-selector-${noteOption.value.replace('#', 's')}`}
                     className={`p-1.5 text-xs font-mono font-semibold rounded-lg border transition-all cursor-pointer ${
-                      activeScaleRoot === noteKey
+                      activeScaleRoot === noteOption.value
                         ? "bg-[#222] text-emerald-500 border-[#333]"
                         : "bg-[#111] border border-[#222] hover:bg-[#161616]"
                     }`}
                   >
-                    {noteKey}
+                    {noteOption.label}
                   </button>
                 ))}
               </div>
@@ -1650,7 +1699,7 @@ export default function App() {
             {/* Suggested degrees keyboard trigger panel */}
             <div className="flex flex-col gap-2 pt-2 border-t border-[#222]/60">
               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
-                {activeScaleRoot} {activeScaleType === "major" ? "Major" : "Minor"} GAMI AKORLARI (Chords)
+                {activeScaleRootLabel} {activeScaleType === "major" ? "Major" : "Minor"} GAMI AKORLARI (Chords)
               </span>
 
               {activeSelectedBeat ? (
