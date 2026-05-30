@@ -41,6 +41,23 @@ const PRESET_TIME_SIGNATURES = [
   "7/16", "9/16"
 ];
 
+type AppTheme = "emerald" | "amber" | "indigo" | "aqua" | "rose";
+
+const THEME_OPTIONS: {
+  id: AppTheme;
+  label: string;
+  title: string;
+  swatch: string;
+  color: string;
+  hover: string;
+}[] = [
+  { id: "emerald", label: "Zümrüt", title: "Zümrüt Yeşili (Midnight Emerald)", swatch: "#10b981", color: "#10b981", hover: "#34d399" },
+  { id: "amber", label: "Altın", title: "Kehribar Altın (Amber Gold)", swatch: "#f59e0b", color: "#f59e0b", hover: "#fbbf24" },
+  { id: "indigo", label: "İndigo", title: "Derin İndigo (Electric Indigo)", swatch: "#6366f1", color: "#6366f1", hover: "#818cf8" },
+  { id: "aqua", label: "Aqua", title: "Fresh Aqua (Bright Cyan)", swatch: "#06b6d4", color: "#06b6d4", hover: "#22d3ee" },
+  { id: "rose", label: "Rose", title: "Fresh Rose (Neon Rose)", swatch: "#f43f5e", color: "#f43f5e", hover: "#fb7185" },
+];
+
 const isValidTimeSignature = (sig: string): boolean => {
   const match = /^(\d+)\/(\d+)$/.exec(sig);
   if (!match) return false;
@@ -57,8 +74,11 @@ export default function App() {
     { id: "m4", timeSignature: "4/4", beats: Array.from({ length: 4 }, () => ({ chord: null })) },
   ]);
 
-  const [appTheme, setAppTheme] = useState<"emerald" | "amber" | "indigo">(
-    () => (localStorage.getItem("chord-daw-theme") as "emerald" | "amber" | "indigo") || "emerald"
+  const [appTheme, setAppTheme] = useState<AppTheme>(
+    () => {
+      const savedTheme = localStorage.getItem("chord-daw-theme") as AppTheme | null;
+      return THEME_OPTIONS.some((theme) => theme.id === savedTheme) ? savedTheme! : "emerald";
+    }
   );
 
   useEffect(() => {
@@ -768,13 +788,15 @@ export default function App() {
   const currentDetails = selectedChord ? getChordNotes(selectedChord) : [];
 
   // Theme configuration values for the 3 beautiful styles
-  const primaryColor = appTheme === "indigo" ? "#6366f1" : appTheme === "amber" ? "#f59e0b" : "#10b981";
-  const primaryHover = appTheme === "indigo" ? "#818cf8" : appTheme === "amber" ? "#fbbf24" : "#34d399";
-  const primaryGlow = appTheme === "indigo" ? "rgba(99, 102, 241, 0.15)" : appTheme === "amber" ? "rgba(245, 158, 11, 0.15)" : "rgba(16, 185, 129, 0.15)";
-  const primaryGlowHeavy = appTheme === "indigo" ? "rgba(99, 102, 241, 0.3)" : appTheme === "amber" ? "rgba(245, 158, 11, 0.3)" : "rgba(16, 185, 129, 0.3)";
-  const primaryBorderGlow = appTheme === "indigo" ? "rgba(99, 102, 241, 0.4)" : appTheme === "amber" ? "rgba(245, 158, 11, 0.4)" : "rgba(16, 185, 129, 0.4)";
-  const primaryMutedBg = appTheme === "indigo" ? "rgba(99, 102, 241, 0.05)" : appTheme === "amber" ? "rgba(245, 158, 11, 0.05)" : "rgba(16, 185, 129, 0.05)";
-  const selectionBg = appTheme === "indigo" ? "rgba(99, 102, 241, 0.2)" : appTheme === "amber" ? "rgba(245, 158, 11, 0.2)" : "rgba(16, 185, 129, 0.2)";
+  const activeTheme = THEME_OPTIONS.find((theme) => theme.id === appTheme) || THEME_OPTIONS[0];
+  const primaryColor = activeTheme.color;
+  const primaryHover = activeTheme.hover;
+  const primaryRgb = primaryColor.match(/\w\w/g)?.map((value) => parseInt(value, 16)).join(", ") || "16, 185, 129";
+  const primaryGlow = `rgba(${primaryRgb}, 0.15)`;
+  const primaryGlowHeavy = `rgba(${primaryRgb}, 0.3)`;
+  const primaryBorderGlow = `rgba(${primaryRgb}, 0.4)`;
+  const primaryMutedBg = `rgba(${primaryRgb}, 0.05)`;
+  const selectionBg = `rgba(${primaryRgb}, 0.2)`;
 
   return (
     <div id="main-applet-container" className="min-h-screen bg-[#050505] text-[#d1d5db] flex flex-col font-sans selection:bg-emerald-500/20">
@@ -890,42 +912,27 @@ export default function App() {
             <div className="text-[10px] uppercase font-bold tracking-wider text-zinc-500 font-mono px-2 hidden sm:inline-block">
               Tema:
             </div>
-            <button
-              onClick={() => setAppTheme("emerald")}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                appTheme === "emerald" 
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold" 
-                  : "text-zinc-500 hover:text-zinc-300 border border-transparent"
-              }`}
-              title="Zümrüt Yeşili (Midnight Emerald)"
-            >
-              <span className="h-2 w-2 rounded-full bg-[#10b981]" />
-              <span className="text-[10px]">Zümrüt</span>
-            </button>
-            <button
-              onClick={() => setAppTheme("amber")}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                appTheme === "amber" 
-                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold" 
-                  : "text-zinc-500 hover:text-zinc-300 border border-transparent"
-              }`}
-              title="Klasik Kehribar (Vintage Amber)"
-            >
-              <span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
-              <span className="text-[10px]">Kehribar</span>
-            </button>
-            <button
-              onClick={() => setAppTheme("indigo")}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                appTheme === "indigo" 
-                  ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 font-semibold" 
-                  : "text-zinc-500 hover:text-zinc-300 border border-transparent"
-              }`}
-              title="Derin Safir (Cosmic Indigo)"
-            >
-              <span className="h-2 w-2 rounded-full bg-[#6366f1]" />
-              <span className="text-[10px]">Safir</span>
-            </button>
+            {THEME_OPTIONS.map((theme) => {
+              const isActive = appTheme === theme.id;
+              return (
+                <button
+                  key={theme.id}
+                  onClick={() => setAppTheme(theme.id)}
+                  className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                    isActive ? "font-semibold" : "text-zinc-500 hover:text-zinc-300 border-transparent"
+                  }`}
+                  style={isActive ? {
+                    backgroundColor: `${theme.color}26`,
+                    borderColor: `${theme.color}4d`,
+                    color: theme.hover,
+                  } : undefined}
+                  title={theme.title}
+                >
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.swatch }} />
+                  <span className="text-[10px]">{theme.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {!isSynthReady && (
