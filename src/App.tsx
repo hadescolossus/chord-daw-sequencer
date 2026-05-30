@@ -27,6 +27,7 @@ import { Chord, Measure, Preset } from "./types";
 import { 
   ROOT_NOTES, 
   ALL_ROOT_NOTES,
+  ROOT_MAP,
   CHORD_QUALITIES, 
   getChordNotes, 
   getChordSymbol, 
@@ -62,18 +63,25 @@ const THEME_OPTIONS: {
 
 const KEY_CENTER_OPTIONS = [
   { value: "C", label: "C" },
-  { value: "C#", label: "C# / Db" },
+  { value: "C#", label: "C#" },
+  { value: "Db", label: "Db" },
   { value: "D", label: "D" },
-  { value: "D#", label: "D# / Eb" },
+  { value: "D#", label: "D#" },
+  { value: "Eb", label: "Eb" },
   { value: "E", label: "E" },
   { value: "F", label: "F" },
-  { value: "F#", label: "F# / Gb" },
+  { value: "F#", label: "F#" },
+  { value: "Gb", label: "Gb" },
   { value: "G", label: "G" },
-  { value: "G#", label: "G# / Ab" },
+  { value: "G#", label: "G#" },
+  { value: "Ab", label: "Ab" },
   { value: "A", label: "A" },
-  { value: "A#", label: "A# / Bb" },
+  { value: "A#", label: "A#" },
+  { value: "Bb", label: "Bb" },
   { value: "B", label: "B" },
 ];
+
+const FLAT_KEY_NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 
 const AUTHOR_YOUTUBE_URL = "https://www.youtube.com/@ersinbisgen";
 const CONTACT_EMAIL = "ersinbisgen@gmail.com";
@@ -784,10 +792,11 @@ export default function App() {
 
   // Load degree chords instantly based on selected tonality (activeScaleRoot + activeScaleType)
   const applyScaleDegreeChord = (offset: number, quality: string) => {
-    const rootIndex = ROOT_NOTES.indexOf(activeScaleRoot);
-    if (rootIndex === -1) return;
+    const rootIndex = ROOT_MAP[activeScaleRoot];
+    if (rootIndex === undefined) return;
 
-    const degreeRootNote = ROOT_NOTES[(rootIndex + offset) % 12];
+    const noteNames = activeScaleRoot.includes("b") ? FLAT_KEY_NOTES : ROOT_NOTES;
+    const degreeRootNote = noteNames[(rootIndex + offset) % 12];
     
     // Choose sensible octave (e.g., C Major -> vii° B is in B3 so that it doesn't sound too squeaky, standard is 4)
     let octaveVal = 4;
@@ -1656,7 +1665,7 @@ export default function App() {
                   <button
                     key={noteOption.value}
                     onClick={() => setActiveScaleRoot(noteOption.value)}
-                    id={`scale-root-selector-${noteOption.value.replace('#', 's')}`}
+                    id={`scale-root-selector-${noteOption.value.replace("#", "s").replace("b", "f")}`}
                     className={`p-1.5 text-xs font-mono font-semibold rounded-lg border transition-all cursor-pointer ${
                       activeScaleRoot === noteOption.value
                         ? "bg-[#222] text-emerald-500 border-[#333]"
@@ -1706,8 +1715,9 @@ export default function App() {
                 <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-4 gap-2">
                     {(activeScaleType === "major" ? MAJOR_SCALE_DEGREES : MINOR_SCALE_DEGREES).map((degreeObj) => {
-                      const rootIndex = ROOT_NOTES.indexOf(activeScaleRoot);
-                      const targetNote = ROOT_NOTES[(rootIndex + degreeObj.offset) % 12];
+                      const rootIndex = ROOT_MAP[activeScaleRoot];
+                      const noteNames = activeScaleRoot.includes("b") ? FLAT_KEY_NOTES : ROOT_NOTES;
+                      const targetNote = noteNames[(rootIndex + degreeObj.offset) % 12];
                       const displaySymbol = `${targetNote}${degreeObj.quality === "min" ? "m" : degreeObj.quality === "dim" ? "dim" : ""}`;
 
                       return (
