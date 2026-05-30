@@ -1,0 +1,6 @@
+{
+  "name": "Chord DAW Sequencer",
+  "description": "Ölçü bazlı akor sekanseri, çevrim pozisyonları, MIDI indirme ve DAW benzeri izleme arayüzü.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
