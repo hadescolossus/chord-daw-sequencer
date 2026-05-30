@@ -797,9 +797,17 @@ export default function App() {
   const primaryBorderGlow = `rgba(${primaryRgb}, 0.4)`;
   const primaryMutedBg = `rgba(${primaryRgb}, 0.05)`;
   const selectionBg = `rgba(${primaryRgb}, 0.2)`;
+  const isFreshTheme = appTheme === "aqua" || appTheme === "rose";
+  const freshBase = appTheme === "rose" ? "#fff7fa" : "#f3fbfd";
+  const freshPanel = appTheme === "rose" ? "rgba(255, 255, 255, 0.82)" : "rgba(255, 255, 255, 0.84)";
+  const freshPanelSolid = appTheme === "rose" ? "#ffffff" : "#fbfeff";
+  const freshPanelSoft = appTheme === "rose" ? "#fff0f5" : "#eefdff";
+  const freshBorder = appTheme === "rose" ? "rgba(244, 63, 94, 0.18)" : "rgba(6, 182, 212, 0.18)";
+  const freshText = "#172033";
+  const freshMutedText = "#5b6472";
 
   return (
-    <div id="main-applet-container" className="min-h-screen bg-[#050505] text-[#d1d5db] flex flex-col font-sans selection:bg-emerald-500/20">
+    <div id="main-applet-container" className={`min-h-screen bg-[#050505] text-[#d1d5db] flex flex-col font-sans selection:bg-emerald-500/20 ${isFreshTheme ? "theme-fresh" : ""}`}>
       
       {/* Dynamic Theme Styles Injection */}
       <style>{`
@@ -880,6 +888,55 @@ export default function App() {
           border-width: 2px !important;
           border-color: ${primaryColor} !important;
           background-color: ${primaryGlow} !important;
+        }
+
+        .theme-fresh {
+          background:
+            radial-gradient(circle at top left, ${primaryGlowHeavy}, transparent 34rem),
+            linear-gradient(135deg, ${freshBase} 0%, #ffffff 48%, ${freshPanelSoft} 100%) !important;
+          color: ${freshText} !important;
+        }
+        .theme-fresh header,
+        .theme-fresh footer {
+          background-color: ${freshPanel} !important;
+          border-color: ${freshBorder} !important;
+          box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+        }
+        .theme-fresh [class*="bg-[#050505]"],
+        .theme-fresh [class*="bg-[#0a0a0a]"],
+        .theme-fresh [class*="bg-[#0b0c10]"],
+        .theme-fresh [class*="bg-[#0c0c0c]"],
+        .theme-fresh [class*="bg-[#111]"],
+        .theme-fresh [class*="bg-[#111115]"],
+        .theme-fresh [class*="bg-[#161616]"] {
+          background-color: ${freshPanel} !important;
+        }
+        .theme-fresh [class*="bg-[#222]"],
+        .theme-fresh [class*="bg-[#151515]"] {
+          background-color: ${freshPanelSoft} !important;
+        }
+        .theme-fresh [class*="border-[#222]"],
+        .theme-fresh [class*="border-[#333]"],
+        .theme-fresh [class*="border-[#333]/40"] {
+          border-color: ${freshBorder} !important;
+        }
+        .theme-fresh .text-white,
+        .theme-fresh .text-zinc-100,
+        .theme-fresh .text-zinc-200 {
+          color: ${freshText} !important;
+        }
+        .theme-fresh .text-zinc-300,
+        .theme-fresh .text-zinc-400,
+        .theme-fresh .text-zinc-500,
+        .theme-fresh .text-zinc-600 {
+          color: ${freshMutedText} !important;
+        }
+        .theme-fresh input,
+        .theme-fresh select,
+        .theme-fresh textarea {
+          background-color: ${freshPanelSolid} !important;
+          color: ${freshText} !important;
+          border-color: ${freshBorder} !important;
         }
       `}</style>
       
